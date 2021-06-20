@@ -11,6 +11,7 @@ private:
 public:
     Registro();
     Registro(const std::vector<LineaRegistro>& lineas);
+    Registro(const Registro& other);
     ~Registro();
 
     void agregarLinea(const LineaRegistro& linea);

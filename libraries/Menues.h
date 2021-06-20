@@ -10,7 +10,7 @@ struct SeleccionTiempo
     std::string descripcion;
     int tiempoSegundos;
     
-    SeleccionTiempo(LineaRegistro* lr);
+    SeleccionTiempo();
 
 private:
     int tiempoIngresadoCorrectamente();
@@ -27,6 +27,6 @@ struct MostrarPagos
 
 struct MenuPrincipal
 {
-    MenuPrincipal(LineaRegistro* lr);
+    MenuPrincipal();
 };
 #endif

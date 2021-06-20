@@ -15,7 +15,11 @@ public:
 
     LineaRegistro(int TiempoConsumido, tm FechaActual, const std::string& Descripcion);
 
+    LineaRegistro(const LineaRegistro& other);
+
     unsigned int getTiempoConsumido() const;
+
+    void setTiempoConsumido(int TiempoConsumido);
 
     unsigned int getDay() const;
 

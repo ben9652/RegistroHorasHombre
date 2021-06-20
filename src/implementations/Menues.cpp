@@ -6,7 +6,7 @@
 #include <string>
 #include <sstream>
 
-SeleccionTiempo::SeleccionTiempo(LineaRegistro* lr)
+SeleccionTiempo::SeleccionTiempo()
 {
     GestorRegistros* gr = GestorRegistros::instanciar();
 
@@ -33,7 +33,7 @@ SeleccionTiempo::SeleccionTiempo(LineaRegistro* lr)
     fgetc(stdin);
     std::getline(std::cin, descripcion);
 
-    lr = new LineaRegistro(tiempoSegundos, descripcion);
+    LineaRegistro* lr = new LineaRegistro(tiempoSegundos, descripcion);
 
     gr->escribirRegistro(*lr);
 }
@@ -141,7 +141,7 @@ MostrarPagos::MostrarPagos()
     }
 }
 
-MenuPrincipal::MenuPrincipal(LineaRegistro* lr)
+MenuPrincipal::MenuPrincipal()
 {
     unsigned int opcion;
     do
@@ -151,7 +151,7 @@ MenuPrincipal::MenuPrincipal(LineaRegistro* lr)
 
         std::cin >> opcion;
         if (opcion == 1)
-            SeleccionTiempo st(lr);
+            SeleccionTiempo st;
 
     }     while (opcion != 2);
 }

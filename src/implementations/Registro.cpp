@@ -15,6 +15,11 @@ Registro::Registro(const std::vector<LineaRegistro>& lineas)
     *(this->lineas) = lineas;
 }
 
+Registro::Registro(const Registro& other) : lineas(other.lineas)
+{
+    finalizado = other.finalizado;
+}
+
 Registro::~Registro()
 {
     delete lineas;

@@ -11,9 +11,7 @@ int main()
 
     GestorRegistros* gr = GestorRegistros::instanciar();
 
-    LineaRegistro* linea_registro = nullptr;
-
-    MenuPrincipal menu(linea_registro);
+    MenuPrincipal menu;
 
     return 0;
 }

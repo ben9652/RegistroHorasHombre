@@ -11,9 +11,11 @@
 class GestorRegistros
 {
 private:
-    std::vector<Registro>* registros = new std::vector<Registro>();
+    static std::vector<Registro>* registros;
     static GestorRegistros* gestor;
     static int tiempoTotal;
+
+    const char* RUTA = "C:\\Users\\Benjamin\\Documents\\Programas\\C++\\RegistroHorasTrabajadas\\Registros\\";
 
     GestorRegistros();
     ~GestorRegistros();
@@ -28,7 +30,7 @@ public:
     void reiniciarTiempo();
     int obtenerTiempoTotal();
 
-    Codigo escribirRegistro(const LineaRegistro& dato);
+    Codigo escribirRegistro(LineaRegistro& dato);
 
     void agregarRegistro(const Registro& registro);
     Registro& obtenerRegistro(unsigned int index) const;

@@ -26,9 +26,21 @@ LineaRegistro::LineaRegistro(int TiempoConsumido, tm FechaActual, const std::str
     this->Descripcion = Descripcion;
 }
 
+LineaRegistro::LineaRegistro(const LineaRegistro& other)
+    : TiempoConsumido(other.TiempoConsumido),
+      Descripcion(other.Descripcion)
+{
+    FechaActual = other.FechaActual;
+}
+
 unsigned int LineaRegistro::getTiempoConsumido() const
 {
     return TiempoConsumido;
+}
+
+void LineaRegistro::setTiempoConsumido(int TiempoConsumido)
+{
+    this->TiempoConsumido = TiempoConsumido;
 }
 
 unsigned int LineaRegistro::getDay() const
