@@ -1,22 +1,25 @@
 #include "Registro.h"
 #include "LineaRegistro.h"
 
-#include <vector>
+#include <iostream>
 
 Registro::Registro()
 {
     finalizado = false;
-    lineas = new std::vector<LineaRegistro>();
+    lineas = new Vector<LineaRegistro>();
 }
 
-Registro::Registro(const std::vector<LineaRegistro>& lineas)
+Registro::Registro(const Vector<LineaRegistro>& lineas)
 {
-    this->lineas = new std::vector<LineaRegistro>();
+    this->lineas = new Vector<LineaRegistro>();
     *(this->lineas) = lineas;
 }
 
-Registro::Registro(const Registro& other) : lineas(other.lineas)
+Registro::Registro(const Registro& other)
 {
+    lineas = new Vector<LineaRegistro>();
+    for(size_t i = 0; i < other.lineas->Size(); i++)
+        lineas->PushBack((*other.lineas)[i]);
     finalizado = other.finalizado;
 }
 
@@ -27,7 +30,7 @@ Registro::~Registro()
 
 void Registro::agregarLinea(const LineaRegistro& linea)
 {
-    lineas->push_back(linea);
+    lineas->PushBack(linea);
 }
 
 LineaRegistro& Registro::obtenerLinea(unsigned int index)
@@ -43,4 +46,12 @@ void Registro::finalizar()
 bool Registro::estaFinalizado()
 {
     return finalizado;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Registro& r)
+{
+    for(LineaRegistro lr : *r.lineas)
+        stream << lr << std::endl;
+
+    return stream;
 }

@@ -2,9 +2,10 @@
 #include "common.h"
 #include "GestorRegistros.h"
 
+#include <iomanip>
 #include <string>
 
-LineaRegistro::LineaRegistro(int tConsumido, const std::string& descr)
+LineaRegistro::LineaRegistro(int tConsumido, char* descr)
 {
     GestorRegistros* gr = GestorRegistros::instanciar();
 
@@ -19,7 +20,7 @@ LineaRegistro::LineaRegistro(int tConsumido, const std::string& descr)
     Descripcion = descr;
 }
 
-LineaRegistro::LineaRegistro(int TiempoConsumido, tm FechaActual, const std::string& Descripcion)
+LineaRegistro::LineaRegistro(int TiempoConsumido, tm FechaActual, char* Descripcion)
 {
     this->TiempoConsumido = TiempoConsumido;
     (*this->FechaActual) = FechaActual;
@@ -31,6 +32,13 @@ LineaRegistro::LineaRegistro(const LineaRegistro& other)
       Descripcion(other.Descripcion)
 {
     FechaActual = other.FechaActual;
+}
+
+LineaRegistro::~LineaRegistro()
+{
+    TiempoConsumido = 0;
+    FechaActual = nullptr;
+    Descripcion = nullptr;
 }
 
 unsigned int LineaRegistro::getTiempoConsumido() const
@@ -68,7 +76,46 @@ unsigned int LineaRegistro::getMinutes() const
     return FechaActual->tm_min;
 }
 
-std::string LineaRegistro::getDescription() const
+char* LineaRegistro::getDescription() const
 {
     return Descripcion;
+}
+
+LineaRegistro& LineaRegistro::operator=(const LineaRegistro& lr)
+{
+    this->TiempoConsumido = lr.TiempoConsumido;
+    this->FechaActual = lr.FechaActual;
+    this->Descripcion = lr.Descripcion;
+    
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& stream, const LineaRegistro& lr)
+{
+    stream << lr.TiempoConsumido << ' ';
+    // Con setw() formateo el dato para que se muestren dos dígitos solamente
+    // Con setfill() relleno los dígitos restantes de la izquierda
+    stream << std::setw(2) << std::setfill('0') << lr.getDay() << '/';
+    stream << std::setw(2) << std::setfill('0') << lr.getMonth() << '/';
+    stream << std::setw(2) << std::setfill('0') << lr.getYear() << ' ';
+    stream << std::setw(2) << std::setfill('0') << lr.getHour() << ':';
+    stream << std::setw(2) << std::setfill('0') << lr.getMinutes() << " - ";
+    stream << lr.Descripcion;
+
+    return stream;
+}
+
+std::ofstream& operator<<(std::ofstream& stream, const LineaRegistro& lr)
+{
+    stream << lr.getTiempoConsumido() << ' ';
+    // Con setw() formateo el dato para que se muestren dos dígitos solamente
+    // Con setfill() relleno los dígitos restantes de la izquierda
+    stream << std::setw(2) << std::setfill('0') << lr.getDay() << '/';
+    stream << std::setw(2) << std::setfill('0') << lr.getMonth() << '/';
+    stream << std::setw(2) << std::setfill('0') << lr.getYear() << ' ';
+    stream << std::setw(2) << std::setfill('0') << lr.getHour() << ':';
+    stream << std::setw(2) << std::setfill('0') << lr.getMinutes() << " - ";
+    stream << lr.getDescription();
+
+    return stream;
 }

@@ -1,16 +1,17 @@
-#include <vector>
+#include <iostream>
+#include <Vector.h>
 #include "LineaRegistro.h"
 
 #ifndef _REGISTROS
 #define _REGISTROS
-struct Registro
+class Registro
 {
 private:
-    std::vector<LineaRegistro>* lineas;
+    Vector<LineaRegistro>* lineas;
     bool finalizado;
 public:
     Registro();
-    Registro(const std::vector<LineaRegistro>& lineas);
+    Registro(const Vector<LineaRegistro>& lineas);
     Registro(const Registro& other);
     ~Registro();
 
@@ -19,5 +20,7 @@ public:
 
     void finalizar();
     bool estaFinalizado();
+    
+    friend std::ostream& operator<<(std::ostream& stream, const Registro& r);
 };
 #endif

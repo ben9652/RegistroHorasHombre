@@ -2,7 +2,7 @@
 #include "Registro.h"
 #include "common.h"
 
-#include <vector>
+#include <Vector.h>
 #include <fstream>
 
 #ifndef _GESTOR_REGISTROS
@@ -11,7 +11,7 @@
 class GestorRegistros
 {
 private:
-    static std::vector<Registro>* registros;
+    static Vector<Registro>* registros;
     static GestorRegistros* gestor;
     static int tiempoTotal;
 

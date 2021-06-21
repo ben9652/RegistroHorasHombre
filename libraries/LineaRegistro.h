@@ -1,21 +1,24 @@
+#include <iostream>
+#include <fstream>
 #include <time.h>
-#include <string>
 
 #ifndef _LINEAS_REGISTROS
 #define _LINEAS_REGISTROS
-struct LineaRegistro
+class LineaRegistro
 {
 private:
     int TiempoConsumido;   // Tiempo (en segundos) consumido en esta instancia
     tm* FechaActual;
-    std::string Descripcion;
+    char* Descripcion;
 
 public:
-    LineaRegistro(int tConsumido, const std::string& descr);
+    LineaRegistro(int tConsumido, char* descr);
 
-    LineaRegistro(int TiempoConsumido, tm FechaActual, const std::string& Descripcion);
+    LineaRegistro(int TiempoConsumido, tm FechaActual, char* Descripcion);
 
     LineaRegistro(const LineaRegistro& other);
+
+    ~LineaRegistro();
 
     unsigned int getTiempoConsumido() const;
 
@@ -31,6 +34,12 @@ public:
 
     unsigned int getMinutes() const;
 
-    std::string getDescription() const;
+    char* getDescription() const;
+
+    LineaRegistro& operator=(const LineaRegistro& lr);
+
+    friend std::ostream& operator<<(std::ostream& stream, const LineaRegistro& lr);
+
+    friend std::ofstream& operator<<(std::fstream& stream, const LineaRegistro& lr);
 };
 #endif

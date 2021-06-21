@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <string.h>
+#include <ctype.h>
 
 SeleccionTiempo::SeleccionTiempo()
 {
@@ -33,7 +35,11 @@ SeleccionTiempo::SeleccionTiempo()
     fgetc(stdin);
     std::getline(std::cin, descripcion);
 
-    LineaRegistro* lr = new LineaRegistro(tiempoSegundos, descripcion);
+    const char* constDescr = descripcion.c_str();
+    char* descripcion_posta = (char*) malloc(strlen(constDescr) + 1);
+    memcpy(descripcion_posta, constDescr, strlen(constDescr) + 1);
+
+    LineaRegistro* lr = new LineaRegistro(tiempoSegundos, descripcion_posta);
 
     gr->escribirRegistro(*lr);
 }
@@ -51,7 +57,7 @@ int SeleccionTiempo::tiempoIngresadoCorrectamente()
     size_t posicion_s;
     if ((tiempo.find('m') != std::string::npos) && (tiempo.find('s') != std::string::npos))
     {
-        // Extracci�n de minutos
+        // Extracción de minutos
         std::getline(ss, token, 'm');
         for (unsigned int i = 0; i < token.size(); i++)
         {
@@ -153,5 +159,5 @@ MenuPrincipal::MenuPrincipal()
         if (opcion == 1)
             SeleccionTiempo st;
 
-    }     while (opcion != 2);
+    } while (opcion != 2);
 }

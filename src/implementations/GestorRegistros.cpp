@@ -9,8 +9,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <direct.h>
+#include <string.h>
+#include <ctype.h>
 
-std::vector<Registro>* GestorRegistros::registros = new std::vector<Registro>();
+Vector<Registro>* GestorRegistros::registros = new Vector<Registro>();
 GestorRegistros* GestorRegistros::gestor = nullptr;
 int GestorRegistros::tiempoTotal = 0;
 
@@ -120,10 +122,14 @@ Codigo GestorRegistros::leerRegistros()
                 Descripcion.erase(Descripcion.size() - 1, 1);
                 Descripcion += '.';
 
-                LineaRegistro linea_a_agregar(TiempoConsumido, FechaActual, Descripcion);
+                const char* constDescr = Descripcion.c_str();
+                char* descripcion_posta = (char*)malloc(strlen(constDescr) + 1);
+                memcpy(descripcion_posta, constDescr, strlen(constDescr) + 1);
+
+                LineaRegistro linea_a_agregar(TiempoConsumido, FechaActual, descripcion_posta);
                 reg_a_agregar.agregarLinea(linea_a_agregar);
             }
-            this->registros->push_back(reg_a_agregar);
+            this->registros->PushBack(reg_a_agregar);
         }
         else
             return Codigo::ERROR_APERTURA;
@@ -155,19 +161,13 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
     std::string nombre_registro = RUTA;
     nombre_registro += "Registro ";
     char* aux = (char*) malloc(6);
-    size_t x = registros->size();
+    size_t x = registros->Size();
     nombre_registro += x == 0? itoa(x + 1, aux, 10) : itoa(x, aux, 10);
     nombre_registro += ".txt";
     delete aux;
-
-    // Recojo los datos de la línea a escribir para que sea más legilbe el código
-    int tiempoConsumido = tiempoFaltante;
-    int dia = dato.getDay();
-    int mes = dato.getMonth();
-    int anio = dato.getYear();
-    int hora = dato.getHour();
-    int minuto = dato.getMinutes();
-    std::string descripcion = dato.getDescription();
+    
+    LineaRegistro* linea_a_escribir = new LineaRegistro(dato);
+    linea_a_escribir->setTiempoConsumido(tiempoFaltante);
 
     // Reviso si existe la carpeta 'Registros'. De no ser así, la creo
     struct stat info;
@@ -178,18 +178,10 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
     // Se intenta hacer la apertura del archivo para escribir al final de este.
     // Si se logra abrir el archivo correctamente, se procede a escribir la línea en él.
     regActual.open(nombre_registro, std::ios::out | std::ios::app);
-    if (!regActual.fail() && tiempoConsumido != 0)
+    if (!regActual.fail() && linea_a_escribir->getTiempoConsumido() != 0)
     {
         exito_apertura = true;
-        regActual << tiempoConsumido << ' ';
-        // Con setw() formateo el dato para que se muestren dos dígitos solamente
-        // Con setfill() relleno los dígitos restantes de la izquierda
-        regActual << std::setw(2) << std::setfill('0') << dia << '/';
-        regActual << std::setw(2) << std::setfill('0') << mes << '/';
-        regActual << std::setw(2) << std::setfill('0') << anio << ' ';
-        regActual << std::setw(2) << std::setfill('0') << hora << ':';
-        regActual << std::setw(2) << std::setfill('0') << minuto << " - ";
-        regActual << descripcion << std::endl;
+        regActual << *linea_a_escribir << std::endl;
     }
 
     // Si se llegan a superar las 2 horas predispuestas para el pago, se escribe un mensaje al final.
@@ -201,14 +193,14 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
 
     regActual.close();
 
-    dato.setTiempoConsumido(tiempoConsumido);
+    dato.setTiempoConsumido(tiempoFaltante);
     // Si el vector de registros está vacío, se agrega un registro, y se agrega la línea actual en él.
     if (x == 0)
     {
         Registro* registroNuevo = new Registro();
         registroNuevo->agregarLinea(dato);
 
-        registros->push_back(*registroNuevo);
+        registros->PushBack(*registroNuevo);
     }
     // Si hay ya algún registro, simplemente se agrega la línea al último registro.
     else
@@ -225,36 +217,25 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
         std::string nombre_registro = RUTA;
         nombre_registro += "Registro ";
         char* aux = (char*) malloc(6);
-        size_t x = registros->size();
+        size_t x = registros->Size();
         nombre_registro += itoa(x + 1, aux, 10);
         nombre_registro += ".txt";
         delete aux;
 
         // Se obtiene el tiempo restante a escribir
-        tiempoConsumido = tiempoTotal;
+        linea_a_escribir->setTiempoConsumido(tiempoTotal);
 
         regActual.open(nombre_registro, std::ios::out);
         if (!regActual.fail())
-        {
-            regActual << tiempoConsumido << ' ';
-            // Con setw() formateo el dato para que se muestren dos dígitos solamente
-            // Con setfill() relleno los dígitos restantes de la izquierda
-            regActual << std::setw(2) << std::setfill('0') << dia << '/';
-            regActual << std::setw(2) << std::setfill('0') << mes << '/';
-            regActual << std::setw(2) << std::setfill('0') << anio << ' ';
-            regActual << std::setw(2) << std::setfill('0') << hora << ':';
-            regActual << std::setw(2) << std::setfill('0') << minuto << " - ";
-            regActual << descripcion << std::endl;
-        }
+            regActual << *linea_a_escribir << std::endl;
 
         regActual.close();
 
         // Se agrega la línea del tiempo que sobra a un nuevo registro en el vector de registros
-        dato.setTiempoConsumido(tiempoConsumido);
         Registro* registroNuevo = new Registro();
-        registroNuevo->agregarLinea(dato);
+        registroNuevo->agregarLinea(*linea_a_escribir);
 
-        registros->push_back(*registroNuevo);
+        registros->PushBack(*registroNuevo);
     }
 
     return Codigo::OK;
@@ -262,7 +243,7 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
 
 void GestorRegistros::agregarRegistro(const Registro& registro)
 {
-    registros->push_back(registro);
+    registros->PushBack(registro);
 }
 
 Registro& GestorRegistros::obtenerRegistro(unsigned int index) const
@@ -292,5 +273,5 @@ int GestorRegistros::obtenerTiempoTotal()
 
 size_t GestorRegistros::cantidadRegistros() const
 {
-    return registros->size();
+    return registros->Size();
 }
