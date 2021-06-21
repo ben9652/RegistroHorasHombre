@@ -33,9 +33,14 @@ void Registro::agregarLinea(const LineaRegistro& linea)
     lineas->PushBack(linea);
 }
 
-LineaRegistro& Registro::obtenerLinea(unsigned int index)
+LineaRegistro& Registro::obtenerLinea(size_t index)
 {
     return (*lineas)[index];
+}
+
+size_t Registro::cantidadLineas()
+{
+    return lineas->Size();
 }
 
 void Registro::finalizar()

@@ -20,10 +20,10 @@ LineaRegistro::LineaRegistro(int tConsumido, char* descr)
     Descripcion = descr;
 }
 
-LineaRegistro::LineaRegistro(int TiempoConsumido, tm FechaActual, char* Descripcion)
+LineaRegistro::LineaRegistro(int TiempoConsumido, tm* FechaActual, char* Descripcion)
 {
     this->TiempoConsumido = TiempoConsumido;
-    (*this->FechaActual) = FechaActual;
+    this->FechaActual = FechaActual;
     this->Descripcion = Descripcion;
 }
 

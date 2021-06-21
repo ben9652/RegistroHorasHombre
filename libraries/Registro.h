@@ -16,7 +16,9 @@ public:
     ~Registro();
 
     void agregarLinea(const LineaRegistro& linea);
-    LineaRegistro& obtenerLinea(unsigned int index);
+    LineaRegistro& obtenerLinea(size_t index);
+
+    size_t cantidadLineas();
 
     void finalizar();
     bool estaFinalizado();

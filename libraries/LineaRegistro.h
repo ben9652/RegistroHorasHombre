@@ -14,7 +14,7 @@ private:
 public:
     LineaRegistro(int tConsumido, char* descr);
 
-    LineaRegistro(int TiempoConsumido, tm FechaActual, char* Descripcion);
+    LineaRegistro(int TiempoConsumido, tm* FechaActual, char* Descripcion);
 
     LineaRegistro(const LineaRegistro& other);
 

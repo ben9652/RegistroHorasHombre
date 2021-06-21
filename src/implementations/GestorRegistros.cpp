@@ -36,41 +36,60 @@ GestorRegistros* GestorRegistros::instanciar()
 Codigo GestorRegistros::leerRegistros()
 {
     std::ifstream registro;
+    size_t cantidadRegistros = 0;
 
     struct stat info;
-
-    if(stat(RUTA, &info) != 0)
+    if(stat("C:\\Users\\Benjamin\\Documents\\Programas\\C++\\RegistroHorasTrabajadas\\Registros", &info) != 0)
         return Codigo::SIN_ARCHIVOS;
     else if(info.st_mode & S_IFDIR)
     {
-        std::string archivo = RUTA;
-        archivo += "Registro 1.txt";
-        registro.open(archivo, std::ios::in);
-        if(registro.fail()) return Codigo::SIN_ARCHIVOS;
+        std::string archivo;
+        size_t contador = 1;
+        while(1)
+        {
+            archivo = RUTA;
+            archivo += "Registro ";
+            char* aux = (char*) malloc(6);
+            archivo += itoa(contador, aux, 10);
+            archivo += ".txt";
+
+            aux = nullptr;
+
+            registro.open(archivo, std::ios::in);
+            if(registro.fail()) break;
+            else cantidadRegistros++;
+
+            registro.close();
+
+            contador++;
+        }
     }
     else
         return Codigo::ERROR_APERTURA;
     
-    for (unsigned int i = 1; i <= cantidadRegistros(); i++)
+    for (unsigned int i = 0; i < cantidadRegistros; i++)
     {
         std::string nombreArchivo = RUTA;
         nombreArchivo += "Registro ";
         char* aux = (char*) malloc(6);
-        nombreArchivo += itoa(cantidadRegistros(), aux, 10);
+        nombreArchivo += itoa(i + 1, aux, 10);
         nombreArchivo += ".txt";
         delete aux;
 
         registro.open(nombreArchivo, std::ios::in);
         if (!registro.fail())
         {
-            Registro reg_a_agregar;
+            Registro* reg_a_agregar = new Registro();
 
             std::string linea;
             while (std::getline(registro, linea))
             {
+                if(linea == "") break;
                 int TiempoConsumido = 0;
-                tm FechaActual{};
+                tm* FechaActual = (tm*)malloc(sizeof(tm));
                 std::string Descripcion = "";
+
+                const char* constDescr = Descripcion.c_str();
 
                 std::stringstream ssLineas(linea);
                 std::string token;
@@ -88,13 +107,13 @@ Codigo GestorRegistros::leerRegistros()
                             std::string fecha;
 
                             std::getline(ssDatos, fecha, '/');
-                            FechaActual.tm_mday = std::stoi(fecha);
+                            FechaActual->tm_mday = std::stoi(fecha);
 
                             std::getline(ssDatos, fecha, '/');
-                            FechaActual.tm_mon = std::stoi(fecha);
+                            FechaActual->tm_mon = std::stoi(fecha);
 
                             std::getline(ssDatos, fecha, '/');
-                            FechaActual.tm_year = std::stoi(fecha) - 1900;
+                            FechaActual->tm_year = std::stoi(fecha) - 1900;
 
                             break;
                         }
@@ -103,10 +122,10 @@ Codigo GestorRegistros::leerRegistros()
                             std::string hora;
 
                             std::getline(ssDatos, hora, ':');
-                            FechaActual.tm_hour = std::stoi(hora);
+                            FechaActual->tm_hour = std::stoi(hora);
 
                             std::getline(ssDatos, hora, ':');
-                            FechaActual.tm_min = std::stoi(hora);
+                            FechaActual->tm_min = std::stoi(hora);
 
                             break;
                         }
@@ -120,19 +139,26 @@ Codigo GestorRegistros::leerRegistros()
                     }
                 }
                 Descripcion.erase(Descripcion.size() - 1, 1);
-                Descripcion += '.';
 
-                const char* constDescr = Descripcion.c_str();
                 char* descripcion_posta = (char*)malloc(strlen(constDescr) + 1);
                 memcpy(descripcion_posta, constDescr, strlen(constDescr) + 1);
 
-                LineaRegistro linea_a_agregar(TiempoConsumido, FechaActual, descripcion_posta);
-                reg_a_agregar.agregarLinea(linea_a_agregar);
+                // Si es el último registro, que se vaya agregando el tiempo total
+                if(i == cantidadRegistros - 1)
+                    tiempoTotal += TiempoConsumido;
+
+                LineaRegistro* linea_a_agregar = new LineaRegistro(TiempoConsumido, FechaActual, descripcion_posta);
+                reg_a_agregar->agregarLinea(*linea_a_agregar);
             }
-            this->registros->PushBack(reg_a_agregar);
+            this->registros->PushBack(*reg_a_agregar);
         }
         else
             return Codigo::ERROR_APERTURA;
+
+        registro.close();
+
+        if(i != cantidadRegistros - 1)
+            finalizarUltimo();
     }
     return Codigo::OK;
 }
@@ -231,6 +257,9 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
 
         regActual.close();
 
+        // Al cumplirse ya el tiempo de trabajo de 2 horas, se finaliza el registro para pasar a crear otro desde cero.
+        finalizarUltimo();
+
         // Se agrega la línea del tiempo que sobra a un nuevo registro en el vector de registros
         Registro* registroNuevo = new Registro();
         registroNuevo->agregarLinea(*linea_a_escribir);
@@ -249,6 +278,11 @@ void GestorRegistros::agregarRegistro(const Registro& registro)
 Registro& GestorRegistros::obtenerRegistro(unsigned int index) const
 {
     return (*registros)[index];
+}
+
+void GestorRegistros::finalizarUltimo()
+{
+    (*registros)[registros->Size() - 1].finalizar();
 }
 
 void GestorRegistros::agregarTiempo(int tiempo_a_agregar)
@@ -271,7 +305,46 @@ int GestorRegistros::obtenerTiempoTotal()
     return tiempoTotal;
 }
 
+tm GestorRegistros::obtenerTmTotal()
+{
+    tm tiempo;
+    int segundos;
+    int minutos;
+    int horas;
+
+    double minutosFloat = tiempoTotal;
+    minutosFloat /= 60;
+    double horasFloat = minutosFloat /= 60;
+
+    horas = horasFloat;
+    if(horasFloat != (double)horas)
+    {
+        minutosFloat = horasFloat - horas;
+        minutosFloat *= 60;
+        minutos = minutosFloat;
+    }
+
+    minutos = minutosFloat;
+    if(minutosFloat != (double)minutos)
+    {
+        double segundosFloat = minutosFloat - minutos;
+        segundosFloat *= 60;
+        segundos = segundosFloat;
+    }
+
+    tiempo.tm_hour = horas;
+    tiempo.tm_min = minutos;
+    tiempo.tm_sec = segundos;
+
+    return tiempo;
+}
+
 size_t GestorRegistros::cantidadRegistros() const
 {
     return registros->Size();
+}
+
+Vector<Registro>* GestorRegistros::obtenerLista() const
+{
+    return registros;
 }

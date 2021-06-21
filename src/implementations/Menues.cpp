@@ -115,36 +115,30 @@ int SeleccionTiempo::tiempoIngresadoCorrectamente()
 
 MostrarPagos::MostrarPagos()
 {
+    system("cls");
     GestorRegistros* gr = GestorRegistros::instanciar();
-
-    for (unsigned int i = 1; i <= gr->cantidadRegistros(); i++)
+    
+    size_t contadorRegistros = 0;
+    for(Registro r : *gr->obtenerLista())
     {
-        std::string archivoNombreCompleto = archivoNombreIncompleto;
-        char* aux = (char*) malloc(6);
-        archivoNombreCompleto += itoa(gr->cantidadRegistros(), aux, 10);
-        archivoNombreCompleto += ".txt";
-        delete aux;
-
-        registro.open(archivoNombreCompleto, std::ios::in);
-        if (!registro.fail())
+        contadorRegistros++;
+        std::cout << "Registro " << contadorRegistros << ": ";
+        if(r.estaFinalizado())
         {
-            bool estaFinalizado = false;
-            std::string linea;
-            while (std::getline(registro, linea))
-            {
-                if (linea.compare(frase_final))
-                    estaFinalizado = true;
-            }
-
-            registro.clear();
-            registro.seekg(0);
-
-            if (estaFinalizado)
-            {
-
-            }
+            std::cout << frase_final << "\n\t";
+            std::cout << "Finaliz\xa2 con la siguiente actividad:\n\t\t" << r.obtenerLinea(r.cantidadLineas() - 1) << "\n";
         }
+        else
+        {
+            std::cout << "\n\tNo finaliz\xa2. Lleva ";
+            tm tiempo = gr->obtenerTmTotal();
+            std::cout << tiempo.tm_hour << " h " << tiempo.tm_min << " min " << tiempo.tm_sec << " seg.\n";
+        }
+        std::cout << std::endl;
     }
+
+    fgetc(stdin);
+    std::cin.get();
 }
 
 MenuPrincipal::MenuPrincipal()
@@ -158,6 +152,8 @@ MenuPrincipal::MenuPrincipal()
         std::cin >> opcion;
         if (opcion == 1)
             SeleccionTiempo st;
+        else if (opcion == 3)
+            MostrarPagos mp;
 
     } while (opcion != 2);
 }

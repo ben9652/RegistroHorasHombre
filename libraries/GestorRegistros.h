@@ -2,6 +2,7 @@
 #include "Registro.h"
 #include "common.h"
 
+#include <time.h>
 #include <Vector.h>
 #include <fstream>
 
@@ -29,12 +30,16 @@ public:
     void restarTiempo(int tiempo_a_restar);
     void reiniciarTiempo();
     int obtenerTiempoTotal();
+    tm obtenerTmTotal();
 
     Codigo escribirRegistro(LineaRegistro& dato);
 
     void agregarRegistro(const Registro& registro);
     Registro& obtenerRegistro(unsigned int index) const;
+    void finalizarUltimo();
 
     size_t cantidadRegistros() const;
+
+    Vector<Registro>* obtenerLista() const;
 };
 #endif
