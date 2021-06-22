@@ -50,7 +50,9 @@ Codigo GestorRegistros::leerRegistros()
             archivo = RUTA;
             archivo += "Registro ";
             char* aux = (char*) malloc(6);
-            archivo += itoa(contador, aux, 10);
+            sprintf(aux, "%d", contador);
+            archivo += aux;
+            // archivo += itoa(contador, aux, 10);
             archivo += ".txt";
 
             aux = nullptr;
@@ -72,7 +74,9 @@ Codigo GestorRegistros::leerRegistros()
         std::string nombreArchivo = RUTA;
         nombreArchivo += "Registro ";
         char* aux = (char*) malloc(6);
-        nombreArchivo += itoa(i + 1, aux, 10);
+        sprintf(aux, "%d", i + 1);
+        nombreArchivo += aux;
+        // nombreArchivo += itoa(i + 1, aux, 10);
         nombreArchivo += ".txt";
         delete aux;
 
@@ -173,10 +177,10 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
 
     // tiempoTotal será el tiempo consumido, pero ya en el siguiente registro
 
-    if (tiempoTotal > 7200)
+    if (tiempoTotal > TIEMPO_LIMITE)
     {
         dosHorasSuperadas = true;
-        tiempoTotal -= 7200;
+        tiempoTotal -= TIEMPO_LIMITE;
         tiempoFaltante -= tiempoTotal;
     }
     
@@ -188,7 +192,9 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
     nombre_registro += "Registro ";
     char* aux = (char*) malloc(6);
     size_t x = registros->Size();
-    nombre_registro += x == 0? itoa(x + 1, aux, 10) : itoa(x, aux, 10);
+    x == 0? sprintf(aux, "%d", x + 1) : sprintf(aux, "%d", x);
+    nombre_registro += aux;
+    // nombre_registro += x == 0? itoa(x + 1, aux, 10) : itoa(x, aux, 10);
     nombre_registro += ".txt";
     delete aux;
     
@@ -244,7 +250,9 @@ Codigo GestorRegistros::escribirRegistro(LineaRegistro& dato)
         nombre_registro += "Registro ";
         char* aux = (char*) malloc(6);
         size_t x = registros->Size();
-        nombre_registro += itoa(x + 1, aux, 10);
+        sprintf(aux, "%d", x + 1);
+        nombre_registro += aux;
+        // nombre_registro += itoa(x + 1, aux, 10);
         nombre_registro += ".txt";
         delete aux;
 

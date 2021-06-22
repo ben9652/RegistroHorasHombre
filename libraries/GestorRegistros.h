@@ -17,6 +17,7 @@ private:
     static int tiempoTotal;
 
     const char* RUTA = "C:\\Users\\Benjamin\\Documents\\Programas\\C++\\RegistroHorasTrabajadas\\Registros\\";
+    const int TIEMPO_LIMITE = 7200;
 
     GestorRegistros();
     ~GestorRegistros();

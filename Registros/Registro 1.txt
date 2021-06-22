@@ -1,4 +1,15 @@
-242 21/06/2021 13:50 - hola
-6958 21/06/2021 13:50 - hola 2
-
-2 horas cumplidas -> $ 300
+46 13/06/2021 22:45 - Explicando el límite al infinito de un coseno
+97 14/06/2021 10:52 - Explicando un ejercicio de números complejos
+1074 14/06/2021 12:05 - Explicando derivaciones de funciones implícitas
+248 15/06/2021 12:11 - Consultas sobre expresiones algebráicas simples, y sobre la regla de la cadena
+346 15/06/2021 14:33 - Dominio de una tangente
+515 15/06/2021 16:00 - Aclaración sobre las derivadas laterales
+690 15/06/2021 16:26 - Aclaración sobre el análisis de la derivación en una función en ramas dada
+285 15/06/2021 19:13 - Ayuda en el factoreo de una expresión para eliminar una indeterminación de un límite
+288 15/06/2021 22:16 - Primera ayuda en un evaluativo de Cálculo I
+308 15/06/2021 22:29 - Ayuda 2 en un evaluativo de Cálculo I
+276 15/06/2021 22:40 - Ayuda 3 en el evaluativo de Cálculo I: la derivada de orden mayor
+96 16/06/2021 15:33 - Explicación de la ecuación cuadrática factoreada
+264 18/06/2021 19:43 - Explicación sobre trabajo realizado
+919 21/06/2021 17:42 - Dudas varias sobre números complejos
+65 21/06/2021 19:45 - Duda sobre un número complejo

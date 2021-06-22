@@ -18,7 +18,7 @@ private:
 
 struct MostrarPagos
 {
-    const std::string frase_final = "2 horas cumplidas -> $ 300";
+    const std::string frase_final = "¡2 horas cumplidas!";
 
     MostrarPagos();
 };
